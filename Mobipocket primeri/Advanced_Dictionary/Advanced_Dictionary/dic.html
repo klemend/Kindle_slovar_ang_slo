@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1" />
+    <title>Advanced dictionary</title>
+  </head>
+  <body>
+    <center>
+      <hr />
+      <font size="+4">Advanced dictionary</font>
+      <hr width="10%" />
+        <!-- controls -->
+        <a onclick="index_search('dic')">Index</a><br />
+      <hr />
+    </center>
+
+<mbp:pagebreak />
+
+
+<!-- DICTIONARY ENTRIES -->
+
+<hr />
+
+<idx:entry name="dic">
+<b>to keep (verb)</b>
+<blockquote>The definition of "to keep" as a verb comes here.</blockquote>
+<b>keep (noun)</b>
+<blockquote>The definition of "a keep" as a noun comes here.</blockquote>
+
+	<!-- define orthography and inflected forms for each orthography -->
+	<!-- new (V2) inflections algorithm used here -->
+	<idx:orth value="keep">
+		<idx:infl inflgrp="n">
+			<idx:iform name="plural" value="keeps"/>
+		</idx:infl>
+		<!-- it is a good idea to separate groups of inflections for words that have multiple parts of speech -->
+		<!-- you can name the inflection groups using the "inflgrp" attribute although it is not mandatory -->
+		<idx:infl inflgrp="v">
+			<idx:iform name="past" value="kept"/>
+			<idx:iform name="pres" value="keeps"/>
+			<idx:iform name="ing" value="keeping"/>
+		</idx:infl>
+		<!-- naming the inflections is optional too. It is useful if you want to query the inflections database -->
+		<!-- for a given inflected form of a base form in Javascript (feature not covered in this sample). -->
+	</idx:orth>
+	<!-- specify part(s) of speech -->
+	<idx:gramgrp value="noun"/>
+	<idx:gramgrp value="verb"/>
+</idx:entry>
+
+<hr />
+
+<idx:entry name="dic">
+	<idx:orth><b>tazqualenkat</b>
+		<idx:infl inflgrp="nom">
+			<idx:iform name="inflection1" value="tazqualenass" />
+			<idx:iform name="inflection2" value="tajnalecrass" />
+			<idx:iform name="inflection3" value="zasqualenkat" />
+		</idx:infl>
+	</idx:orth>
+	<blockquote>The word "tazqualenkat" is here just to make testing easier as it is unlikely to appear in any other english dictionary. In fact, it does not exist in English.
+	Its inflected forms are: <B>tazqualenass</B>, <b>tajnalecrass</b>, <b>zasqualenkat</b>. Try using the "lookup" feature of the Reader on them. It should bring you back to this entry.
+	</blockquote>
+<br/>
+Part of speech: <idx:gramgrp>invented name</idx:gramgrp>
+</idx:entry>
+<hr/>
+
+</body>
+</html>
