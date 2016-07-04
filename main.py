@@ -1,25 +1,37 @@
 # odprem datoteko
-f = open('slovar_mini_unicode.txt', 'r', encoding='utf8')
+f = open('slovar_mini_unicode.txt', 'r', encoding='utf-8')
 
 # preberem vrstice
-lines=[]
+lines = []
 for line in f:
     lines.append(line)
 
-# locim geslo in zaglavje
-kljuci=[]
-razlage={}
-for line in lines:
+podatek = {}
+# prva vrstica vsebuje rubrike
+first_line = lines[0]
+# odstaniti moram znak za novo vrstico
+first_line = first_line.replace('\n', '')
+rubrike = first_line.split("\t")
+
+# vsaki rubriki naredim prazen slovar
+for p in rubrike[1:]:
+    podatek[p] = {}
+
+# v vsaki vrstici locim geslo_id in zaglavje
+gesla_id = []
+for line in lines[1:]:
     words = line.split("\t")
-    geslo = words[0]
-    kljuc = words[1]
-    razlaga = words[2]
-    kljuci.append(kljuc)
-    razlage[kljuc] = razlaga
+    geslo_id = words[0]
+    zaglavje = words[1:]
+    gesla_id.append(geslo_id)
+    # posamezen element dam na pravo mesto
+    for p, v in zip(rubrike[1:], zaglavje):
+        podatek[p][geslo_id] = v
+
 
 ### PISANJE HTML DATOTEKE ###
 
-d = open('slovar.html', 'w', encoding='utf8')
+d = open('slovar.html', 'w', encoding='utf-8')
 
 # glava
 d.write("""
@@ -39,14 +51,47 @@ xmlns:idx="http://www.mobipocket.com/idx">
     <mbp:frameset>
     """)
 
+import inflect
+p = inflect.engine()
 
-for kljuc in sorted(kljuci):
-    d.write('<idx:entry>\n<b><idx:orth>%s</idx:orth></b>\n<p>%s</p>\n</idx:entry>\n\n' % (kljuc, razlage[kljuc]))
+for geslo_id in sorted(gesla_id):
+    if podatek["BESEDNA_VRSTA"][geslo_id] == "noun":
+        mnozina = p.plural(podatek["GESLO"][geslo_id])
+        d.write("<idx:entry>\n<idx:orth><b>%s</b>\n<idx:infl>\n<idx:iform value=\"%s\"/>\n</idx:infl>\n</idx:orth>\n"
+                "<p>%s <i style=\"color:#808080\">%s</i> %s</p>\n</idx:entry>\n\n" % (podatek["GESLO"][geslo_id], mnozina, podatek["IZGOVORJAVA"][geslo_id],podatek["BESEDNA_VRSTA"][geslo_id], podatek["RAZLAGA"][geslo_id].replace('"', '')))
+    elif podatek["BESEDNA_VRSTA"][geslo_id] == "verb":
+        present_participle = p.present_participle(podatek["GESLO"][geslo_id])
+        past_participle = podatek["GESLO"][geslo_id] + "ed"
+        third_singular = podatek["GESLO"][geslo_id] + "s"
+        if podatek["GESLO"][geslo_id][-1] == "e":
+            past_participle = podatek["GESLO"][geslo_id] + "d"
 
+        d.write("<idx:entry>\n<idx:orth><b>%s</b>\n<idx:infl>\n"
+                "<idx:iform value=\"%s\"/>\n"
+                "<idx:iform value=\"%s\"/>\n"
+                "<idx:iform value=\"%s\"/>\n"
+                "</idx:infl>\n</idx:orth>\n"
+                "<p>%s <i style=\"color:#808080\">%s</i> %s</p>\n</idx:entry>\n\n" % (podatek["GESLO"][geslo_id], present_participle, past_participle, third_singular, podatek["IZGOVORJAVA"][geslo_id],podatek["BESEDNA_VRSTA"][geslo_id], podatek["RAZLAGA"][geslo_id].replace('"', '')))
+    else:
+        d.write("<idx:entry>\n<idx:orth><b>%s</b>\n</idx:orth>\n<p>%s</p>\n</idx:entry>\n\n" % (podatek["GESLO"][geslo_id], podatek["RAZLAGA"][geslo_id].replace('"', '')))
+
+# REP datoteke
 d.write("""
     </mbp:frameset>
     </body>
 </html>  """)
+
+
+# # preberem vrstice
+# kval_f = open('Kvalifikatorji.txt', 'r', encoding='utf-8')
+# kvalifikatorji = []
+# for line in kval_f:
+#     kvalifikatorji.append(line)
+#
+# g = open('slovar.html', 'w', encoding='utf-8')
+# for i in kvalifikatorji:
+
+
 
 ### PISANJE OPF DATOTEKE ###
 
@@ -76,3 +121,4 @@ opf.write("""
 	<tours></tours>
 	<guide></guide>
 </package>""")
+
